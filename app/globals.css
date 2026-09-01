@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap");
+
 /*-----------------------------------*\
   #style.css
 \*-----------------------------------*/
@@ -110,7 +112,18 @@ button {
 
 address { font-style: normal; }
 
-ion-icon { pointer-events: none; }
+ion-icon {
+  pointer-events: none;
+  width: 1em;
+  height: 1em;
+  background-color: currentColor;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
 
 html {
   font-family: var(--ff-nunito-sans);
@@ -200,7 +213,10 @@ button, a { transition: var(--transition); }
 
 .btn:is(:hover, :focus)::before { width: 100%; }
 
-.w-100 { width: 100%; }
+.w-100 {
+  width: 100%;
+  height: auto;
+}
 
 .section-subtitle {
   color: var(--orange-soda);
@@ -481,6 +497,8 @@ button, a { transition: var(--transition); }
   margin-bottom: 30px;
 }
 
+.hero .btn { width: max-content; }
+
 
 
 
@@ -499,6 +517,7 @@ button, a { transition: var(--transition); }
 .about-banner > img {
   max-width: max-content;
   width: 100%;
+  height: auto;
 }
 
 .about-banner .abs-img {
