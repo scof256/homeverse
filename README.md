@@ -55,7 +55,7 @@ npm run build
 docker build -t homeverse .
 ```
 
-The container serves the Next.js standalone output as a non-root user and reports readiness at `/api/health`.
+The container serves the Next.js standalone output as a non-root user and reports readiness at `/api/health`. On Vercel, standalone output is disabled automatically so Vercel can perform its own Next.js tracing and function packaging.
 
 ## Deployment
 

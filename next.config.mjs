@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "standalone",
+  // Vercel packages Next.js output itself. Standalone output is retained for
+  // the Docker/self-hosted build, where the generated server.js is required.
+  ...(process.env.VERCEL ? {} : { output: "standalone" }),
   poweredByHeader: false,
   compress: true,
   experimental: { serverActions: { bodySizeLimit: "50mb" } },
