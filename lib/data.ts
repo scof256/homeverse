@@ -37,6 +37,8 @@ export async function getProperties(filters: PropertyFilters = {}, includeUnpubl
       if (filters.minPrice && property.price < filters.minPrice) return false;
       if (filters.maxPrice && property.price > filters.maxPrice) return false;
       if (filters.bedrooms && property.bedrooms < filters.bedrooms) return false;
+      if (filters.amenity && !property.amenities.some((item) => item.toLowerCase().includes(filters.amenity!.toLowerCase()))) return false;
+      if (filters.agentId && property.agentId !== filters.agentId) return false;
       return true;
     });
   }
@@ -53,6 +55,8 @@ export async function getProperties(filters: PropertyFilters = {}, includeUnpubl
   if (filters.minPrice) query = query.gte("price", filters.minPrice);
   if (filters.maxPrice) query = query.lte("price", filters.maxPrice);
   if (filters.bedrooms) query = query.gte("bedrooms", filters.bedrooms);
+  if (filters.amenity) query = query.contains("amenities", [filters.amenity]);
+  if (filters.agentId) query = query.eq("agent_id", filters.agentId);
   const { data, error } = await query.limit(100);
   if (error) throw new Error("Unable to load properties");
   return (data || []).map(mapProperty);
@@ -69,7 +73,7 @@ export async function getProfiles(): Promise<Profile[]> {
   if (demoMode) return Object.values(demoProfiles);
   const supabase = await createClient();
   const { data } = await supabase.from("profiles").select("*").order("created_at", { ascending: false });
-  return (data || []).map((row) => ({ id: row.id, fullName: row.full_name, email: row.email, phone: row.phone, role: row.role, agencyName: row.agency_name, licenseNumber: row.license_number, createdAt: row.created_at }));
+  return (data || []).map((row) => ({ id: row.id, fullName: row.full_name, email: row.email, phone: row.phone, avatarUrl: row.avatar_url || undefined, bio: row.bio || undefined, role: row.role, agencyName: row.agency_name, licenseNumber: row.license_number, createdAt: row.created_at }));
 }
 
 export async function getInquiries(): Promise<Inquiry[]> {

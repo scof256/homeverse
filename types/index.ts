@@ -52,6 +52,8 @@ export type PropertyFilters = {
   minPrice?: number;
   maxPrice?: number;
   bedrooms?: number;
+  amenity?: string;
+  agentId?: string;
 };
 
 export type Inquiry = {

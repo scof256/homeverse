@@ -112,3 +112,16 @@ export async function moderateListing(formData: FormData) {
   await supabase.from("properties").update({ status: parsed.data.status, verified: parsed.data.status === "published" }).eq("id", parsed.data.propertyId);
   revalidatePath("/dashboard/moderation"); revalidatePath("/properties"); redirect("/dashboard/moderation?notice=listing-updated");
 }
+
+export async function sendContactMessage(formData: FormData) {
+  const parsed = z.object({
+    name: z.string().min(2).max(120), email: z.string().email().max(255), phone: z.string().max(40).optional(),
+    subject: z.string().min(3).max(160), message: z.string().min(20).max(3000),
+  }).safeParse(Object.fromEntries(formData));
+  if (!parsed.success) redirect("/contact?error=check-your-message");
+  if (demoMode) redirect("/contact?notice=message-received");
+  const supabase = await createClient();
+  const { error } = await supabase.from("contact_messages").insert(parsed.data);
+  if (error) redirect("/contact?error=message-not-sent");
+  redirect("/contact?notice=message-received");
+}

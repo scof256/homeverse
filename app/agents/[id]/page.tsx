@@ -1,0 +1,10 @@
+import Image from "next/image";
+import Link from "next/link";
+import { Mail, Phone, ShieldCheck } from "lucide-react";
+import { notFound } from "next/navigation";
+import AppHeader from "@/components/AppHeader";
+import AppFooter from "@/components/AppFooter";
+import PropertyCard from "@/components/PropertyCard";
+import { getProfiles, getProperties } from "@/lib/data";
+
+export default async function AgentPage({ params }: { params: Promise<{ id: string }> }) { const { id } = await params; const [profiles, properties] = await Promise.all([getProfiles(), getProperties({ agentId: id })]); const agent = profiles.find((profile) => profile.id === id && profile.role === "agent"); if (!agent) notFound(); return <div className="app-shell"><AppHeader /><main><section className="content-hero"><div className="app-container agent-heading"><Image src={agent.avatarUrl || "/assets/images/author.jpg"} width={130} height={130} alt={agent.fullName} /><div><span className="app-eyebrow">Verified property professional</span><h1>{agent.fullName}</h1><p>{agent.bio || "A Homeverse property professional helping customers make informed decisions."}</p><div><span><ShieldCheck size={17} />{agent.agencyName || "Homeverse Realty"}</span>{agent.email ? <a href={`mailto:${agent.email}`}><Mail size={17} />{agent.email}</a> : null}{agent.phone ? <a href={`tel:${agent.phone}`}><Phone size={17} />{agent.phone}</a> : null}</div></div></div></section><section className="app-container content-section"><div className="section-row"><div><span className="app-eyebrow">Current inventory</span><h2>Properties listed by {agent.fullName}</h2></div><Link href="/properties">Search all properties</Link></div>{properties.length ? <div className="app-property-grid">{properties.map((property) => <PropertyCard property={property} key={property.id} />)}</div> : <div className="app-empty"><h2>No published properties at present</h2><p>Check the main marketplace for other available homes.</p></div>}</section></main><AppFooter /></div>; }
