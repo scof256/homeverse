@@ -1,0 +1,12 @@
+import Link from "next/link";
+import { Building2, CalendarDays, Heart, MessageSquare, Plus } from "lucide-react";
+import MetricCard from "@/components/MetricCard";
+import Notice from "@/components/Notice";
+import { requireProfile } from "@/lib/auth";
+import { getAppointments, getInquiries, getProperties } from "@/lib/data";
+
+export default async function Dashboard({ searchParams }: { searchParams: Promise<{ notice?: string; error?: string }> }) {
+  const profile = await requireProfile(); const messages = await searchParams;
+  const [properties, inquiries, appointments] = await Promise.all([getProperties({}, true), getInquiries(), getAppointments()]);
+  return <><header className="dash-heading"><div><span className="app-eyebrow">{profile.role} workspace</span><h1>Good to see you, {profile.fullName.split(" ")[0]}</h1><p>Here’s what needs your attention today.</p></div>{profile.role !== "customer" && <Link className="app-button" href="/dashboard/listings/new"><Plus size={18} />Add listing</Link>}</header><Notice {...messages} /><section className="metric-grid"><MetricCard label="Active listings" value={properties.filter((p) => p.status === "published").length} detail="Visible in the marketplace" icon={Building2} /><MetricCard label="Open inquiries" value={inquiries.filter((i) => i.status !== "closed").length} detail="Awaiting follow-up" icon={MessageSquare} /><MetricCard label="Upcoming viewings" value={appointments.filter((a) => a.status !== "cancelled").length} detail="Scheduled or requested" icon={CalendarDays} /><MetricCard label="Saved homes" value="2" detail="In your shortlist" icon={Heart} /></section><section className="dash-two-col"><article className="dash-card"><div className="dash-card-title"><h2>Recent inquiries</h2><Link href="/dashboard/inquiries">View all</Link></div><div className="dash-list">{inquiries.map((item) => <div key={item.id}><div className={`status-dot ${item.status}`} /><div><b>{item.propertyTitle}</b><span>{item.customerName} · {new Date(item.createdAt).toLocaleDateString()}</span></div><span className="status-pill">{item.status}</span></div>)}</div></article><article className="dash-card"><div className="dash-card-title"><h2>Upcoming viewings</h2><Link href="/dashboard/appointments">Calendar</Link></div><div className="dash-list">{appointments.map((item) => <div key={item.id}><CalendarDays size={20} /><div><b>{item.propertyTitle}</b><span>{new Date(item.scheduledAt).toLocaleString()}</span></div><span className="status-pill">{item.status}</span></div>)}</div></article></section></>;
+}

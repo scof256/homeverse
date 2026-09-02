@@ -1,0 +1,4 @@
+import { requireProfile } from "@/lib/auth";
+import { getInquiries } from "@/lib/data";
+
+export default async function InquiriesPage() { await requireProfile(["agent", "admin"]); const inquiries = await getInquiries(); return <><header className="dash-heading"><div><span className="app-eyebrow">Lead management</span><h1>Property inquiries</h1><p>Prioritize new buyers and renters and keep follow-up visible.</p></div></header><div className="inquiry-grid">{inquiries.map((item) => <article className="dash-card inquiry-card" key={item.id}><div><span className={`status-pill ${item.status}`}>{item.status}</span><time>{new Date(item.createdAt).toLocaleString()}</time></div><h2>{item.propertyTitle}</h2><p>“{item.message}”</p><footer><div><b>{item.customerName}</b><span>{item.customerEmail}</span></div><a className="app-button app-button-small" href={`mailto:${item.customerEmail}`}>Reply</a></footer></article>)}</div></>; }

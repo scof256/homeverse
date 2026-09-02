@@ -11,3 +11,4 @@
 # system and editor files
 .DS_Store
 *.log
+*.tsbuildinfo

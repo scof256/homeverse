@@ -1,8 +1,11 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Homeverse - Find your dream house",
-  description: "A responsive real estate marketplace built with Next.js.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
+  title: { default: "Homeverse — Find a place to call home", template: "%s | Homeverse" },
+  description: "Search verified homes, contact trusted agents, and manage every step of your property journey.",
+  openGraph: { title: "Homeverse", description: "A trusted property marketplace for buyers, renters and agents.", type: "website" },
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({ children }) {

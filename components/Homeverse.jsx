@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-const navItems = ["Home", "About", "Service", "Property", "Blog", "Contact"];
+const navItems = [["Home", "#home"], ["About", "#about"], ["Service", "#service"], ["Property", "/properties"], ["Blog", "#blog"], ["Contact", "#contact"]];
 
 const services = [
   ["Buy a home", "/assets/images/service-1.png"],
@@ -12,10 +12,10 @@ const services = [
 ];
 
 const properties = [
-  ["New Apartment Nice View", "/assets/images/property-1.jpg", "For Rent", "green"],
-  ["Modern Apartments", "/assets/images/property-2.jpg", "For Sales", "orange"],
-  ["Comfortable Apartment", "/assets/images/property-3.jpg", "For Rent", "green"],
-  ["Luxury villa in Rego Park", "/assets/images/property-4.png", "For Rent", "green"],
+  ["New Apartment Nice View", "/assets/images/property-1.jpg", "For Rent", "green", "new-apartment-nice-view", "$2,400", "/Month"],
+  ["Modern Apartments", "/assets/images/property-2.jpg", "For Sale", "orange", "modern-city-apartments", "$349,000", ""],
+  ["Comfortable Apartment", "/assets/images/property-3.jpg", "For Rent", "green", "comfortable-family-apartment", "$1,950", "/Month"],
+  ["Luxury villa in Rego Park", "/assets/images/property-4.png", "For Sale", "orange", "rego-park-luxury-villa", "$875,000", ""],
 ];
 
 const amenities = [
@@ -69,7 +69,7 @@ function Header() {
                 <li key={icon}><a href="#contact" className="header-top-social-link" aria-label={icon.replace("logo-", "")}><Icon name={icon} /></a></li>
               ))}
             </ul>
-            <button className="header-top-btn">Add Listing</button>
+            <a className="header-top-btn" href="/dashboard/listings/new">Add Listing</a>
           </div>
         </div>
       </div>
@@ -84,13 +84,13 @@ function Header() {
             </div>
             <div className="navbar-bottom">
               <ul className="navbar-list">
-                {navItems.map((item) => <li key={item}><a href={`#${item.toLowerCase()}`} className="navbar-link" onClick={closeMenu}>{item}</a></li>)}
+                {navItems.map(([label, href]) => <li key={label}><a href={href} className="navbar-link" onClick={closeMenu}>{label}</a></li>)}
               </ul>
             </div>
           </nav>
           <div className="header-bottom-actions">
-            {[["search-outline", "Search"], ["person-outline", "Profile"], ["cart-outline", "Cart"]].map(([icon, label]) => (
-              <button className="header-bottom-actions-btn" aria-label={label} key={label}><Icon name={icon} /><span>{label}</span></button>
+            {[["search-outline", "Search", "/properties"], ["person-outline", "Profile", "/dashboard"], ["heart-outline", "Saved", "/dashboard/favorites"]].map(([icon, label, href]) => (
+              <a href={href} className="header-bottom-actions-btn" aria-label={label} key={label}><Icon name={icon} /><span>{label}</span></a>
             ))}
             <button className="header-bottom-actions-btn" onClick={() => setMenuOpen(true)} aria-label="Open Menu"><Icon name="menu-outline" /><span>Menu</span></button>
           </div>
@@ -101,11 +101,11 @@ function Header() {
 }
 
 function PropertyCard({ property }) {
-  const [title, image, badge, color] = property;
+  const [title, image, badge, color, slug, price, suffix] = property;
   return (
     <div className="property-card">
       <figure className="card-banner">
-        <a href="#contact"><Image src={image} width={850} height={650} alt={title} className="w-100" loading="eager" /></a>
+        <a href={`/properties/${slug}`}><Image src={image} width={850} height={650} alt={title} className="w-100" loading="eager" /></a>
         <div className={`card-badge ${color}`}>{badge}</div>
         <div className="banner-actions">
           <button className="banner-actions-btn"><Icon name="location" /><address>Belmont Gardens, Chicago</address></button>
@@ -114,9 +114,9 @@ function PropertyCard({ property }) {
         </div>
       </figure>
       <div className="card-content">
-        <div className="card-price"><strong>$34,900</strong>/Month</div>
-        <h3 className="h3 card-title"><a href="#contact">{title}</a></h3>
-        <p className="card-text">Beautiful Huge 1 Family House In Heart Of Westbury. Newly Renovated With New Wood</p>
+        <div className="card-price"><strong>{price}</strong>{suffix}</div>
+        <h3 className="h3 card-title"><a href={`/properties/${slug}`}>{title}</a></h3>
+        <p className="card-text">A carefully selected home with practical space, trusted listing details and direct agent support.</p>
         <ul className="card-list">
           <li className="card-item"><strong>3</strong><Icon name="bed-outline" /><span>Bedrooms</span></li>
           <li className="card-item"><strong>2</strong><Icon name="man-outline" /><span>Bathrooms</span></li>
@@ -171,8 +171,8 @@ export default function Homeverse() {
               <div className="hero-content">
                 <p className="hero-subtitle"><Icon name="home" /><span>Real Estate Agency</span></p>
                 <h1 className="h1 hero-title">Find Your Dream House By Us</h1>
-                <p className="hero-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore.</p>
-                <a className="btn" href="#contact">Make An Enquiry</a>
+                <p className="hero-text">Search verified homes, compare the details that matter, and move from shortlist to viewing with a trusted local agent.</p>
+                <a className="btn" href="/properties">Explore Properties</a>
               </div>
               <figure className="hero-banner"><Image src="/assets/images/hero-banner.png" width={717} height={541} alt="Modern house model" className="w-100" priority /></figure>
             </div>
@@ -187,13 +187,13 @@ export default function Homeverse() {
               <div className="about-content">
                 <p className="section-subtitle">About Us</p>
                 <h2 className="h2 section-title">The Leading Real Estate Rental Marketplace.</h2>
-                <p className="about-text">Over 39,000 people work for us in more than 70 countries all over the This breadth of global coverage, combined with specialist services</p>
+                <p className="about-text">Homeverse brings renters, buyers and trusted property professionals together in one clear, accountable marketplace.</p>
                 <ul className="about-list">
                   {[["home-outline", "Smart Home Design"], ["leaf-outline", "Beautiful Scene Around"], ["wine-outline", "Exceptional Lifestyle"], ["shield-checkmark-outline", "Complete 24/7 Security"]].map(([icon, text]) => (
                     <li className="about-item" key={text}><div className="about-item-icon"><Icon name={icon} /></div><p className="about-item-text">{text}</p></li>
                   ))}
                 </ul>
-                <p className="callout">&quot;Enimad minim veniam quis nostrud exercitation llamco laboris. Lorem ipsum dolor sit amet&quot;</p>
+                <p className="callout">&quot;A better property decision starts with accurate information, responsive agents and a process you can follow.&quot;</p>
                 <a href="#service" className="btn">Our Services</a>
               </div>
             </div>
@@ -264,7 +264,7 @@ function Footer() {
       <div className="footer-top"><div className="container">
         <div className="footer-brand">
           <a href="#home" className="logo"><Image src="/assets/images/logo-light.png" width={230} height={34} alt="Homeverse logo" loading="eager" /></a>
-          <p className="section-text">Lorem Ipsum is simply dummy text of the and typesetting industry. Lorem Ipsum is dummy text of the printing.</p>
+          <p className="section-text">A modern property marketplace for finding homes, scheduling viewings, managing listings and building trusted customer relationships.</p>
           <ul className="contact-list">
             <li><a href="#contact" className="contact-link"><Icon name="location-outline" /><address>Brooklyn, New York, United States</address></a></li>
             <li><a href="tel:+0123456789" className="contact-link"><Icon name="call-outline" /><span>+0123-456789</span></a></li>

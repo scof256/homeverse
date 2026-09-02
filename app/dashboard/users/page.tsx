@@ -1,0 +1,6 @@
+import { updateRole } from "@/app/actions/platform";
+import Notice from "@/components/Notice";
+import { requireProfile } from "@/lib/auth";
+import { getProfiles } from "@/lib/data";
+
+export default async function UsersPage({ searchParams }: { searchParams: Promise<{ notice?: string }> }) { await requireProfile(["admin"]); const [users, messages] = await Promise.all([getProfiles(), searchParams]); return <><header className="dash-heading"><div><span className="app-eyebrow">Access control</span><h1>Users and roles</h1><p>Approve agents and control administrative access. New registrations default to customer.</p></div></header><Notice {...messages} /><div className="dash-card table-card"><table><thead><tr><th>User</th><th>Contact</th><th>Joined</th><th>Role</th></tr></thead><tbody>{users.map((user) => <tr key={user.id}><td><b>{user.fullName}</b></td><td>{user.email}<br /><small>{user.phone}</small></td><td>{user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "—"}</td><td><form action={updateRole} className="role-form"><input type="hidden" name="userId" value={user.id} /><select name="role" defaultValue={user.role}><option value="customer">Customer</option><option value="agent">Agent</option><option value="admin">Admin</option></select><button>Save</button></form></td></tr>)}</tbody></table></div></>; }
